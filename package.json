@@ -1,0 +1,40 @@
+{
+  "name": "beamer-cli",
+  "version": "0.1.0",
+  "description": "CLI for creating LaTeX Beamer presentations with ease",
+  "type": "module",
+  "bin": {
+    "slides": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "npx tsx src/cli.ts",
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "beamer",
+    "latex",
+    "slides",
+    "presentation",
+    "cli"
+  ],
+  "author": "Siddhant Jain <post.siddhant@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.19.6",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  },
+  "dependencies": {
+    "chalk": "^5.4.0",
+    "chokidar": "^4.0.0",
+    "commander": "^13.0.0",
+    "yaml": "^2.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

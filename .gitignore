@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+*.pdf
+*.aux
+*.out
+*.nav
+*.snm
+*.toc
+*.vrb
