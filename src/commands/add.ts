@@ -5,7 +5,7 @@
 import { appendFileSync, readdirSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename } from 'node:path';
 import chalk from 'chalk';
-import { getTemplate, listTemplates, type TemplateName } from '../templates/index.js';
+import { getTemplate, type TemplateName } from '../templates/index.js';
 
 interface AddOptions {
   output?: string;

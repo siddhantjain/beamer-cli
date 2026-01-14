@@ -197,7 +197,7 @@ def hello(name):
   
   \\begin{quote}
     \\Large\\itshape
-    ``The best way to predict the future is to invent it.''
+    \`\`The best way to predict the future is to invent it.''
   \\end{quote}
   
   \\vspace{1em}

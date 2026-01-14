@@ -2,9 +2,9 @@
  * slides build - Compile .tex to PDF
  */
 
-import { execSync, spawn } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import { existsSync, readdirSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { basename } from 'node:path';
 import chalk from 'chalk';
 
 interface BuildOptions {
@@ -94,7 +94,7 @@ export function build(file: string | undefined, options: BuildOptions): void {
     
     console.log('');
     console.log(chalk.green(`✓ Built ${pdfFile} in ${elapsed}s`));
-  } catch (error) {
+  } catch {
     console.error(chalk.red('Build failed'));
     process.exit(1);
   }

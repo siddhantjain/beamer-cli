@@ -156,9 +156,8 @@ const rules = {
   // Common mistakes
   underscoreInText: (content: string, lines: string[]): LintIssue[] => {
     const issues: LintIssue[] = [];
-    let inMath = false;
+    // TODO: track math mode and verbatim mode for smarter underscore detection
     let inLstlisting = false;
-    let inVerbatim = false;
 
     lines.forEach((line, idx) => {
       if (line.includes('\\begin{lstlisting}') || line.includes('\\begin{verbatim}')) {
@@ -213,7 +212,7 @@ function findTexFile(file?: string): string {
   return texFiles.find(f => f === `${dirName}.tex` || f === 'main.tex') ?? texFiles[0];
 }
 
-export function lint(file: string | undefined, options: LintOptions): void {
+export function lint(file: string | undefined, _options: LintOptions): void {
   const texFile = findTexFile(file);
   
   console.log(chalk.blue(`Linting ${texFile}...`));
