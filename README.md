@@ -27,6 +27,7 @@ curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh
 | `slides from-md <file>` | Convert Markdown to Beamer |
 | `slides icons <query>` | Search FontAwesome icons |
 | `slides themes` | List available themes |
+| `slides preview [file]` | Preview slides in terminal |
 
 ## Quick Start
 
@@ -158,6 +159,25 @@ After `slides init`:
 my-talk/
 ├── my-talk.tex      # Main presentation
 └── slides.yaml      # Config (theme, engine, etc.)
+```
+
+## Terminal Preview
+
+Preview your slides directly in the terminal:
+
+```bash
+slides preview              # Show first slide
+slides preview -p 3         # Show slide 3
+slides preview --all        # Thumbnail grid of all slides
+```
+
+**Requires:**
+- `poppler-utils` (for pdftoppm): `apt install poppler-utils`
+- A terminal image viewer: `timg`, `chafa`, or `viu`
+
+```bash
+# Install a viewer
+apt install timg   # or chafa
 ```
 
 ## Speaker Notes

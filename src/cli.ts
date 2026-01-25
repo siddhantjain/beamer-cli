@@ -12,6 +12,7 @@ import { icons } from './commands/icons.js';
 import { lint } from './commands/lint.js';
 import { fromMd } from './commands/fromMd.js';
 import { themes } from './commands/themes.js';
+import { preview } from './commands/preview.js';
 
 const program = new Command();
 
@@ -79,5 +80,14 @@ program
   .command('themes')
   .description('List available Beamer themes')
   .action(themes);
+
+// slides preview
+program
+  .command('preview [file]')
+  .description('Preview PDF slides in terminal')
+  .option('-p, --page <n>', 'Page number to preview', '1')
+  .option('-a, --all', 'Show all slides as thumbnails')
+  .option('-w, --width <pixels>', 'Image width', '800')
+  .action(preview);
 
 program.parse();
