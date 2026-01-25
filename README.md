@@ -100,6 +100,7 @@ slides add split             # Image + text side by side
 slides add timeline          # Project timeline
 slides add comparison        # Pros/cons columns
 slides add highlight         # Key takeaway callout
+slides add notes             # Slide with speaker notes
 ```
 
 ## Lint Before Building
@@ -157,6 +158,35 @@ After `slides init`:
 my-talk/
 ├── my-talk.tex      # Main presentation
 └── slides.yaml      # Config (theme, engine, etc.)
+```
+
+## Speaker Notes
+
+Add speaker notes in your Markdown with `Note:` or `Notes:`:
+
+```markdown
+## My Slide
+
+Key points for the audience
+
+Note: This is a speaker note!
+- Remind them about X
+- Mention the story
+- Pause for questions
+```
+
+Or use `slides add notes` for a LaTeX template with notes.
+
+### Viewing Notes
+
+Use a presentation tool that supports Beamer notes:
+
+```bash
+# pdfpc (recommended) - shows notes on presenter screen
+pdfpc my-talk.pdf
+
+# Or enable dual-screen notes in LaTeX
+\setbeameroption{show notes on second screen=right}
 ```
 
 ## Tips

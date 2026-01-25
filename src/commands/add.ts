@@ -24,6 +24,7 @@ const slideTypes: Record<string, TemplateName> = {
   timeline: 'timeline',
   comparison: 'comparison',
   highlight: 'highlight',
+  notes: 'notes',
 };
 
 function findTexFile(output?: string): string {

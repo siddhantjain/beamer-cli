@@ -209,6 +209,20 @@ function mdToLatex(lines: string[]): string {
       inList = null;
     }
 
+    // Subheadings (### and ####)
+    if (line.startsWith('#### ')) {
+      const heading = line.slice(5).trim();
+      result.push(`\\textbf{${escapeLatex(heading)}}`);
+      result.push('');
+      continue;
+    }
+    if (line.startsWith('### ')) {
+      const heading = line.slice(4).trim();
+      result.push(`\\textbf{\\large ${escapeLatex(heading)}}`);
+      result.push('');
+      continue;
+    }
+
     // Regular text
     result.push(formatInlineMarkdown(escapeLatex(line)));
   }
@@ -252,14 +266,14 @@ function renderTable(rows: string[][]): string {
   
   // Header row
   if (rows.length > 0) {
-    const header = rows[0].map(c => `\\textbf{${escapeLatex(c)}}`).join(' & ');
+    const header = rows[0].map(c => `\\textbf{${formatInlineMarkdown(escapeLatex(c))}}`).join(' & ');
     lines.push(`${header} \\\\`);
     lines.push('\\midrule');
   }
   
-  // Data rows
+  // Data rows - now with inline markdown support!
   for (let i = 1; i < rows.length; i++) {
-    const row = rows[i].map(c => escapeLatex(c)).join(' & ');
+    const row = rows[i].map(c => formatInlineMarkdown(escapeLatex(c))).join(' & ');
     lines.push(`${row} \\\\`);
   }
   
@@ -270,7 +284,66 @@ function renderTable(rows: string[][]): string {
   return lines.join('\n');
 }
 
+/**
+ * Common emoji to text/symbol mappings for LaTeX
+ */
+const emojiMap: Record<string, string> = {
+  '✅': '[OK]',
+  '❌': '[X]',
+  '⭐': '*',
+  '🔥': '[!]',
+  '💡': '[i]',
+  '⚠️': '[!]',
+  '📍': '[>]',
+  '🎉': '',
+  '🐙': '',
+  '✨': '',
+  '🚀': '[>]',
+  '💰': '[$]',
+  '📧': '[email]',
+  '📅': '[cal]',
+  '🏆': '[#1]',
+  '👍': '[+]',
+  '👎': '[-]',
+  '❤️': '[<3]',
+  '🌤️': '',
+  '☀️': '',
+  '⛅': '',
+  '🔴': '[!]',
+  '🟡': '[~]',
+  '🟢': '[OK]',
+  '🔧': '',
+  '📋': '',
+  '🛒': '',
+  '🚗': '',
+  '🥾': '',
+  '🌲': '',
+  '🏠': '',
+  '👨‍👩‍👧‍👧': '',
+  '🇺🇸': 'US',
+  '🇮🇳': 'IN',
+};
+
+/**
+ * Strip or convert emojis to LaTeX-safe text
+ */
+function handleEmojis(text: string): string {
+  // First, replace known emojis with their mappings
+  for (const [emoji, replacement] of Object.entries(emojiMap)) {
+    text = text.replaceAll(emoji, replacement);
+  }
+  
+  // Then strip any remaining emojis (Unicode emoji ranges)
+  // This regex matches most common emoji ranges
+  text = text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]/gu, '');
+  
+  return text;
+}
+
 function escapeLatex(text: string): string {
+  // Handle emojis first
+  text = handleEmojis(text);
+  
   return text
     .replace(/\\/g, '\\textbackslash{}')
     .replace(/_/g, '\\_')
@@ -294,10 +367,14 @@ function generateLatex(meta: Record<string, string>, slides: Slide[], options: F
   const date = meta['date'] ?? '\\today';
   const theme = meta['theme'] ?? options.theme;
   const colorTheme = meta['colorTheme'] ?? options.color;
+  
+  // Check if any slides have speaker notes
+  const hasNotes = slides.some(s => s.notes && s.notes.length > 0 && s.notes.some(n => n.trim()));
 
   let latex = `\\documentclass[aspectratio=169]{beamer}
 \\usetheme{${theme}}
 \\usecolortheme{${colorTheme}}
+${hasNotes ? '\\setbeameroption{show notes on second screen=right}' : ''}
 
 \\usepackage{listings}
 \\usepackage{tikz}
@@ -331,7 +408,19 @@ function generateLatex(meta: Record<string, string>, slides: Slide[], options: F
     
     latex += `\\begin{frame}${frameOpt}{${escapeLatex(slide.title)}}\n`;
     latex += content;
-    latex += '\n\\end{frame}\n\n';
+    latex += '\n\\end{frame}\n';
+    
+    // Add speaker notes if present
+    if (slide.notes && slide.notes.length > 0) {
+      const notesContent = slide.notes
+        .filter(n => n.trim())
+        .map(n => escapeLatex(n))
+        .join('\n');
+      if (notesContent.trim()) {
+        latex += `\\note{${notesContent}}\n`;
+      }
+    }
+    latex += '\n';
   }
 
   latex += `\\begin{frame}

@@ -304,6 +304,28 @@ def hello(name):
   \\end{itemize}
 \\end{frame}
 `,
+
+  notes: () => `
+% --- Slide with Speaker Notes ---
+% To view notes: use pdfpc or add \\setbeameroption{show notes on second screen=right}
+\\begin{frame}{Important Point}
+  \\begin{itemize}
+    \\item Key message for the audience
+    \\item Supporting detail
+    \\item Call to action
+  \\end{itemize}
+\\end{frame}
+\\note{
+  \\textbf{Speaker notes:}
+  \\begin{itemize}
+    \\item Remind audience of context
+    \\item Mention the story behind this
+    \\item Pause for questions here
+  \\end{itemize}
+  
+  Time: ~2 minutes
+}
+`,
 };
 
 export type TemplateName = keyof typeof templates;
