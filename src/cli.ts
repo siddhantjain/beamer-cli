@@ -79,6 +79,11 @@ program
 program
   .command('themes')
   .description('List available Beamer themes')
+  .option('--save <name>', 'Save current settings as a custom theme')
+  .option('--use <name>', 'Show details of a custom theme')
+  .option('--list-custom', 'List only custom themes')
+  .option('-t, --theme <theme>', 'Base theme (for --save)', 'Madrid')
+  .option('-c, --color <color>', 'Color theme (for --save)', 'dolphin')
   .action(themes);
 
 // slides preview
