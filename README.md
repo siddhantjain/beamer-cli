@@ -28,6 +28,7 @@ curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh
 | `slides icons <query>` | Search FontAwesome icons |
 | `slides themes` | List available themes |
 | `slides preview [file]` | Preview slides in terminal |
+| `slides export [file]` | Export to HTML (reveal.js) |
 
 ## Quick Start
 
@@ -160,6 +161,24 @@ my-talk/
 ├── my-talk.tex      # Main presentation
 └── slides.yaml      # Config (theme, engine, etc.)
 ```
+
+## HTML Export (reveal.js)
+
+Export your presentation to HTML for web viewing:
+
+```bash
+slides export                    # Export to HTML
+slides export -t white           # Use white theme
+slides export -o slides.html     # Custom output name
+```
+
+**Reveal.js themes:** black, white, league, beige, sky, night, serif, simple, solarized
+
+Features:
+- Speaker notes (press 'S' to view)
+- Keyboard navigation
+- Works in any browser
+- No server required
 
 ## Terminal Preview
 

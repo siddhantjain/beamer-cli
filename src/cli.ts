@@ -13,6 +13,7 @@ import { lint } from './commands/lint.js';
 import { fromMd } from './commands/fromMd.js';
 import { themes } from './commands/themes.js';
 import { preview } from './commands/preview.js';
+import { exportPresentation } from './commands/export.js';
 
 const program = new Command();
 
@@ -94,5 +95,14 @@ program
   .option('-a, --all', 'Show all slides as thumbnails')
   .option('-w, --width <pixels>', 'Image width', '800')
   .action(preview);
+
+// slides export
+program
+  .command('export [file]')
+  .description('Export presentation to HTML (reveal.js)')
+  .option('-f, --format <format>', 'Output format (html)', 'html')
+  .option('-o, --output <file>', 'Output file name')
+  .option('-t, --theme <theme>', 'Reveal.js theme (black, white, league, etc.)', 'black')
+  .action(exportPresentation);
 
 program.parse();
