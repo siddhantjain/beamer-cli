@@ -2,8 +2,8 @@
  * slides export - Export presentation to HTML (reveal.js)
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { basename, dirname, join } from 'node:path';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { basename } from 'node:path';
 import chalk from 'chalk';
 
 interface ExportOptions {

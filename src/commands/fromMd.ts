@@ -4,8 +4,6 @@
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 import chalk from 'chalk';
 
 interface FromMdOptions {

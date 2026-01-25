@@ -2,7 +2,7 @@
  * slides preview - Preview PDF slides in terminal
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { execSync, spawnSync } from 'node:child_process';
 import { basename } from 'node:path';
 import chalk from 'chalk';
@@ -72,7 +72,6 @@ function findPdfFile(file?: string): string {
   }
 
   // Find any PDF
-  const { readdirSync } = require('node:fs');
   const pdfs = readdirSync('.').filter((f: string) => f.endsWith('.pdf'));
 
   if (pdfs.length === 0) {
@@ -139,7 +138,7 @@ function displayImage(imgFile: string, viewer: { cmd: string; args: string[] }):
 
   // Clean up temp file
   try {
-    require('node:fs').unlinkSync(imgFile);
+    unlinkSync(imgFile);
   } catch {
     // Ignore cleanup errors
   }
