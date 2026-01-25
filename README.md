@@ -49,6 +49,26 @@ slides build
 slides watch
 ```
 
+## Mermaid Diagrams
+
+Include mermaid diagrams in your markdown:
+
+```markdown
+## Architecture
+
+\`\`\`mermaid
+graph LR
+  A[Input] --> B[Process]
+  B --> C[Output]
+\`\`\`
+```
+
+Diagrams are automatically converted to TikZ. Supports:
+- `graph LR` (left-to-right)
+- `graph TD` (top-down)
+- Basic node labels `A[Label]`
+- Arrows `-->`
+
 ## Convert Markdown to Slides
 
 Write slides in Markdown:

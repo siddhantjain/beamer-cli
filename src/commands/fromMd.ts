@@ -3,6 +3,9 @@
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { execSync } from 'node:child_process';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import chalk from 'chalk';
 
 interface FromMdOptions {
@@ -10,6 +13,83 @@ interface FromMdOptions {
   theme: string;
   color: string;
 }
+
+/**
+ * Check if mmdc (mermaid-cli) is available
+ */
+function hasMermaidCli(): boolean {
+  try {
+    execSync('mmdc --version', { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Convert mermaid diagram to TikZ (basic graph LR/TD support)
+ */
+function mermaidToTikz(mermaid: string): string {
+  const lines = mermaid.trim().split('\n');
+  const firstLine = lines[0]?.trim() ?? '';
+
+  // Detect graph direction
+  const isLR = firstLine.includes('LR') || firstLine.includes('-->');
+  const direction = isLR ? 'right' : 'below';
+
+  // Parse nodes and edges
+  const nodes: Map<string, string> = new Map();
+  const edges: Array<[string, string, string]> = [];
+
+  for (const line of lines.slice(1)) {
+    // Match: A[Label] --> B[Label]
+    const edgeMatch = line.match(/(\w+)(?:\[([^\]]+)\])?\s*-->\s*(\w+)(?:\[([^\]]+)\])?/);
+    if (edgeMatch) {
+      const [, fromId, fromLabel, toId, toLabel] = edgeMatch;
+      if (fromLabel) nodes.set(fromId, fromLabel);
+      if (toLabel) nodes.set(toId, toLabel);
+      if (!nodes.has(fromId)) nodes.set(fromId, fromId);
+      if (!nodes.has(toId)) nodes.set(toId, toId);
+      edges.push([fromId, toId, '']);
+      continue;
+    }
+
+    // Match: A[Label]
+    const nodeMatch = line.match(/(\w+)\[([^\]]+)\]/);
+    if (nodeMatch) {
+      nodes.set(nodeMatch[1], nodeMatch[2]);
+    }
+  }
+
+  if (nodes.size === 0) {
+    return '% Could not parse mermaid diagram\n';
+  }
+
+  // Generate TikZ
+  let tikz = '\\begin{tikzpicture}[node distance=2cm, auto,\n';
+  tikz += '  box/.style={draw, rounded corners, minimum width=2cm, minimum height=0.8cm}]\n';
+
+  // Place nodes
+  let prevNode = '';
+  for (const [id, label] of nodes) {
+    if (prevNode === '') {
+      tikz += `  \\node[box] (${id}) {${label}};\n`;
+    } else {
+      tikz += `  \\node[box, ${direction}=of ${prevNode}] (${id}) {${label}};\n`;
+    }
+    prevNode = id;
+  }
+
+  // Draw edges
+  for (const [from, to] of edges) {
+    tikz += `  \\draw[->] (${from}) -- (${to});\n`;
+  }
+
+  tikz += '\\end{tikzpicture}';
+  return tikz;
+}
+
+let mermaidWarningShown = false;
 
 interface Slide {
   title: string;
@@ -156,9 +236,21 @@ function mdToLatex(lines: string[]): string {
         // Output code block without blank lines at start/end
         const trimmedCode = codeLines.join('\n').trim();
         if (trimmedCode) {
-          result.push(`\\begin{lstlisting}[language=${codeLanguage}]`);
-          result.push(trimmedCode);
-          result.push('\\end{lstlisting}');
+          // Handle mermaid diagrams
+          if (codeLanguage === 'mermaid') {
+            if (!mermaidWarningShown && !hasMermaidCli()) {
+              console.log(chalk.yellow('  Note: Install mmdc for better mermaid rendering: npm i -g @mermaid-js/mermaid-cli'));
+              mermaidWarningShown = true;
+            }
+            // Convert mermaid to TikZ
+            const tikz = mermaidToTikz(trimmedCode);
+            result.push('\\centering');
+            result.push(tikz);
+          } else {
+            result.push(`\\begin{lstlisting}[language=${codeLanguage}]`);
+            result.push(trimmedCode);
+            result.push('\\end{lstlisting}');
+          }
         }
       }
       continue;
